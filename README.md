@@ -1,88 +1,76 @@
-# llama4-maverick-demo
+# Exploring PyTorch with LLaMA 4's 1M-Token Context Window
 
-This repository demonstrates how to use the LLaMA 4 Maverick model (via Fireworks AI) with a 1M-token context window to analyze the entire PyTorch codebase in a single prompt.
+The rapid evolution of large language models (LLMs) has unlocked new possibilities for code analysis, documentation, and understanding. One of the most exciting frontiers is the ability to process and reason over massive codebases in a single inference—something that was previously impossible due to context window limitations.
 
-## Project Overview
-
-Large Language Models (LLMs) are revolutionizing code analysis, documentation, and understanding. With the advent of models like LLaMA 4 Maverick, which supports a 1 million token context window, it's now possible to query and analyze entire codebases in a single shot. This project leverages the Fireworks AI API to feed the entire PyTorch codebase into LLaMA 4 Maverick, enabling deep, context-rich queries and insights.
-
-## Features
-- Clones the PyTorch repository
-- Reads and concatenates all Python files
-- Tokenizes and trims the corpus to the last 1,000,000 tokens
-- Sends the prompt to LLaMA 4 Maverick via the Fireworks API
-- Prints the model's response
-
-## Step-by-Step Usage
-
-1. **Install dependencies:**
-   ```bash
-   pip install gitpython fireworks-ai tiktoken
-   ```
-2. **Set your Fireworks API key** in the script.
-3. **Run the script** to analyze the PyTorch codebase with LLaMA 4 Maverick.
-
-## How It Works
-
-### 1. Setup and Configuration
-```python
-API_KEY    = "<Fireworks API Key>"
-MODEL_NAME = "accounts/fireworks/models/llama4-maverick-instruct-basic"
-client = Fireworks(api_key=API_KEY)
-```
-
-### 2. Clone the PyTorch Repository
-```python
-REPO_URL = "https://github.com/pytorch/pytorch.git"
-LOCAL_PATH = "pytorch"
-if not os.path.isdir(LOCAL_PATH):
-    Repo.clone_from(REPO_URL, LOCAL_PATH)
-```
-
-### 3. Read and Concatenate Python Files
-```python
-corpus = []
-for root, _, files in os.walk(LOCAL_PATH):
-    for name in files:
-        if name.endswith(".py"):
-            with open(os.path.join(root, name), "r", encoding="utf-8", errors="ignore") as f:
-                corpus.append(f.read())
-big_text = "\n".join(corpus)
-```
-
-### 4. Tokenize and Trim
-```python
-enc = tiktoken.encoding_for_model(MODEL_NAME)
-all_tokens = enc.encode(big_text)
-MAX_CTX = 1_000_000
-trimmed = all_tokens[-MAX_CTX:] if len(all_tokens) > MAX_CTX else all_tokens
-prompt_text = enc.decode(trimmed)
-```
-
-### 5. Query the Model
-```python
-response = client.chat.completions.create(
-    model=MODEL_NAME,
-    max_tokens=16384,
-    temperature=0.2,
-    top_p=1,
-    top_k=40,
-    presence_penalty=0.0,
-    frequency_penalty=0.0,
-    prompt_truncate_len=MAX_CTX,
-)
-```
-
-### 6. Display the Model's Response
-```python
-print(response.choices[0].message.content)
-```
-
-## Why is This Powerful?
-- **Massive Context Window:** Analyze entire codebases without chunking or losing context.
-- **Flexible Queries:** Ask for summaries, call traces, or cross-module insights.
-- **Automation:** The script can be adapted for any large codebase, not just PyTorch.
+In this post, we'll walk through a Python script that demonstrates how to use Fireworks AI's LLaMA 4 Maverick model, with its groundbreaking 1-million-token context window, to analyze the entire PyTorch codebase in one go.
 
 ---
 
-*This project showcases the power of large-context LLMs for holistic codebase analysis.*
+## Why Analyze an Entire Codebase at Once?
+
+Traditional LLMs are limited to a few thousand tokens, which means you can only analyze small code snippets or single files at a time. With a 1M-token context window, you can provide the model with the entire codebase—enabling it to answer high-level questions, trace call stacks, and identify cross-module patterns that would otherwise be invisible.
+
+---
+
+## The Script: Step by Step
+
+Let's break down the script and see how it works.
+
+### 1. **Setup and Dependencies**
+
+The script uses the following key libraries:
+- `gitpython` to clone the PyTorch repository.
+- `fireworks.client` to interact with the Fireworks AI API.
+- `tiktoken` for tokenization and context management.
+
+You'll need to provide your Fireworks API key and ensure the required packages are installed.
+
+### 2. **Cloning the PyTorch Repository**
+
+```python
+REPO_URL = "https://github.com/pytorch/pytorch.git"
+LOCAL_PATH = "pytorch"
+
+if not os.path.isdir(LOCAL_PATH):
+    print(f"Cloning {REPO_URL} → {LOCAL_PATH} …")
+    Repo.clone_from(REPO_URL, LOCAL_PATH)
+else:
+    print(f"Using existing clone at ./{LOCAL_PATH}")
+```
+
+This ensures you have a local copy of the latest PyTorch codebase to analyze.
+
+### 3. **Reading and Concatenating All Python Files**
+
+The script recursively walks through the repository, reading every `.py` file and concatenating their contents into a single large string. Each file is prefixed with a header indicating its path.
+
+### 4. **Tokenization and Trimming**
+
+Since even a 1M-token window has its limits, the script uses `tiktoken` to tokenize the entire corpus and trims it to the last 1,000,000 tokens if necessary. This ensures the prompt fits within the model's context window.
+
+### 5. **Crafting the Prompt and Querying the Model**
+
+The script demonstrates two example prompts (commented out for you to choose):
+- **Code Structure Summary:** Asks the model to list all top-level packages, describe data flow, and highlight cross-module helpers.
+- **End-to-End Call Stack Trace:** Requests a detailed trace from a specific API call (`torch.Tensor.backward()`) through Python, C++, and CUDA layers.
+
+You can customize the prompt to suit your analysis needs.
+
+### 6. **Displaying the Model's Response**
+
+Finally, the script prints the model's answer, which could be a comprehensive summary, a call stack trace, or any other insight you request.
+
+---
+
+## What Can You Do With This?
+
+- **Codebase Summarization:** Get a high-level overview of any large project.
+- **Cross-Module Analysis:** Identify utility functions or patterns reused across the codebase.
+- **Call Stack Tracing:** Trace complex execution paths across language boundaries (Python → C++ → CUDA).
+- **Automated Documentation:** Generate documentation or onboarding materials for new contributors.
+
+---
+
+## Final Thoughts
+
+This script is a powerful demonstration of what's possible with next-generation LLMs and massive context windows. As models like LLaMA 4 Maverick become more accessible, expect even more innovative applications in code analysis, research, and beyond.
