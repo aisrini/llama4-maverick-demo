@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # LLaMA 4 Maverick PyTorch Codebase Analyzer — Code Summary
 
 This repository contains a Python script that showcases the use of Fireworks AI's LLaMA 4 Maverick model, leveraging its unprecedented 1-million-token context window to analyze the entire PyTorch codebase in a single inference. The script:
@@ -86,3 +87,6 @@ Finally, the script prints the model's answer, which could be a comprehensive su
 ## Final Thoughts
 
 This script is a powerful demonstration of what's possible with next-generation LLMs and massive context windows. As models like LLaMA 4 Maverick become more accessible, expect even more innovative applications in code analysis, research, and beyond.
+=======
+
+>>>>>>> a90efe8eb6d9102eeb5a47aa16a6ec8fb51ca76c
