@@ -1,92 +1,119 @@
-<<<<<<< HEAD
-# LLaMA 4 Maverick PyTorch Codebase Analyzer — Code Summary
+# LLaMA 4 Maverick PyTorch Codebase Analyzer
 
-This repository contains a Python script that showcases the use of Fireworks AI's LLaMA 4 Maverick model, leveraging its unprecedented 1-million-token context window to analyze the entire PyTorch codebase in a single inference. The script:
-
-- Clones the PyTorch repository locally (if not already present).
-- Recursively reads and concatenates all Python files in the codebase.
-- Tokenizes the combined code and trims it to fit within a 1M-token limit.
-- Sends the massive prompt to the LLaMA 4 Maverick model via the Fireworks API.
-- Prints the model's response, which can be customized to provide code structure summaries, call stack traces, or other insights.
+This project demonstrates how to leverage Fireworks AI's LLaMA 4 Maverick model and its groundbreaking 1-million-token context window to analyze the entire PyTorch codebase in a single inference. The script automates the process of cloning PyTorch, aggregating all Python files, tokenizing the corpus, and querying the LLaMA 4 model for deep codebase insights.
 
 ---
 
-# Exploring PyTorch with LLaMA 4's 1M-Token Context Window
-
-The rapid evolution of large language models (LLMs) has unlocked new possibilities for code analysis, documentation, and understanding. One of the most exciting frontiers is the ability to process and reason over massive codebases in a single inference—something that was previously impossible due to context window limitations.
-
-In this post, we'll walk through a Python script that demonstrates how to use Fireworks AI's LLaMA 4 Maverick model, with its groundbreaking 1-million-token context window, to analyze the entire PyTorch codebase in one go.
-
----
-
-## Why Analyze an Entire Codebase at Once?
-
-Traditional LLMs are limited to a few thousand tokens, which means you can only analyze small code snippets or single files at a time. With a 1M-token context window, you can provide the model with the entire codebase—enabling it to answer high-level questions, trace call stacks, and identify cross-module patterns that would otherwise be invisible.
+## 🚀 Features
+- **1M-token context window:** Analyze massive codebases in one go.
+- **Automated PyTorch clone:** Always works with the latest codebase.
+- **Full Python file aggregation:** Reads and concatenates every `.py` file.
+- **Tokenization and context management:** Ensures the prompt fits the model's window.
+- **Customizable prompts:** Choose from code structure summaries, call stack traces, or your own queries.
+- **Fireworks AI API integration:** Seamless interaction with LLaMA 4 Maverick.
 
 ---
 
-## The Script: Step by Step
+## 📂 Project Structure
 
-Let's break down the script and see how it works.
+- `llama4-maverick-code-demo.py` — Main script for codebase analysis
+- `README.md` — This documentation
+- `pytorch/` — Local clone of the PyTorch repository (auto-generated)
 
-### 1. **Setup and Dependencies**
+---
 
-The script uses the following key libraries:
-- `gitpython` to clone the PyTorch repository.
-- `fireworks.client` to interact with the Fireworks AI API.
-- `tiktoken` for tokenization and context management.
+## 🛠️ Setup & Installation
 
-You'll need to provide your Fireworks API key and ensure the required packages are installed.
-
-### 2. **Cloning the PyTorch Repository**
-
-```python
-REPO_URL = "https://github.com/pytorch/pytorch.git"
-LOCAL_PATH = "pytorch"
-
-if not os.path.isdir(LOCAL_PATH):
-    print(f"Cloning {REPO_URL} → {LOCAL_PATH} …")
-    Repo.clone_from(REPO_URL, LOCAL_PATH)
-else:
-    print(f"Using existing clone at ./{LOCAL_PATH}")
+### 1. **Clone this repository**
+```bash
+git clone https://github.com/aisrini/llama4-maverick-demo.git
+cd llama4-maverick-demo
 ```
 
-This ensures you have a local copy of the latest PyTorch codebase to analyze.
+### 2. **Install dependencies**
+You need Python 3.8+ and the following packages:
+- `gitpython`
+- `fireworks-ai`
+- `tiktoken`
 
-### 3. **Reading and Concatenating All Python Files**
+Install them via pip:
+```bash
+pip install gitpython fireworks-ai tiktoken
+```
 
-The script recursively walks through the repository, reading every `.py` file and concatenating their contents into a single large string. Each file is prefixed with a header indicating its path.
-
-### 4. **Tokenization and Trimming**
-
-Since even a 1M-token window has its limits, the script uses `tiktoken` to tokenize the entire corpus and trims it to the last 1,000,000 tokens if necessary. This ensures the prompt fits within the model's context window.
-
-### 5. **Crafting the Prompt and Querying the Model**
-
-The script demonstrates two example prompts (commented out for you to choose):
-- **Code Structure Summary:** Asks the model to list all top-level packages, describe data flow, and highlight cross-module helpers.
-- **End-to-End Call Stack Trace:** Requests a detailed trace from a specific API call (`torch.Tensor.backward()`) through Python, C++, and CUDA layers.
-
-You can customize the prompt to suit your analysis needs.
-
-### 6. **Displaying the Model's Response**
-
-Finally, the script prints the model's answer, which could be a comprehensive summary, a call stack trace, or any other insight you request.
+### 3. **Get a Fireworks API Key**
+- Sign up at [Fireworks AI](https://fireworks.ai/) and obtain your API key.
+- Replace `<Fireworks API Key>` in the script with your actual key.
 
 ---
 
-## What Can You Do With This?
+## ⚡ Usage
 
-- **Codebase Summarization:** Get a high-level overview of any large project.
-- **Cross-Module Analysis:** Identify utility functions or patterns reused across the codebase.
-- **Call Stack Tracing:** Trace complex execution paths across language boundaries (Python → C++ → CUDA).
-- **Automated Documentation:** Generate documentation or onboarding materials for new contributors.
+Run the main script:
+```bash
+python llama4-maverick-code-demo.py
+```
+
+**What happens:**
+1. The script clones the PyTorch repo (if not already present).
+2. It reads every `.py` file, concatenates them, and tokenizes the result.
+3. The last 1,000,000 tokens are used as the prompt for LLaMA 4 Maverick.
+4. The model is queried with a customizable prompt (see script for examples).
+5. The model's response is printed to the console.
 
 ---
 
-## Final Thoughts
+## 📝 Customizing the Prompt
 
-This script is a powerful demonstration of what's possible with next-generation LLMs and massive context windows. As models like LLaMA 4 Maverick become more accessible, expect even more innovative applications in code analysis, research, and beyond.
-=======
+In the script, you can choose or modify the prompt for your analysis. Two examples are provided (commented out):
+- **Code Structure Summary:**
+  - Lists all top-level packages and submodules.
+  - Describes high-level data flow (Python → C++ → CUDA).
+  - Highlights cross-module helpers.
+- **End-to-End Call Stack Trace:**
+  - Traces execution from `torch.Tensor.backward()` through all layers.
 
->>>>>>> a90efe8eb6d9102eeb5a47aa16a6ec8fb51ca76c
+You can edit or add your own prompts in the `messages` section of the script.
+
+---
+
+## 🔒 Configuration
+
+- **API Key:** Set your Fireworks API key in the `API_KEY` variable.
+- **Model:** The script uses `accounts/fireworks/models/llama4-maverick-instruct-basic` by default.
+- **Token Limit:** The script trims the prompt to the last 1,000,000 tokens to fit the model's context window.
+
+---
+
+## 🧩 Troubleshooting
+
+- **API Errors:** Ensure your API key is valid and you have access to the LLaMA 4 Maverick model.
+- **Dependency Issues:** Double-check that all required Python packages are installed.
+- **Large Disk Usage:** The PyTorch repo is large; ensure you have enough disk space.
+- **Tokenization Issues:** If you see errors with `tiktoken`, ensure you have the latest version.
+
+---
+
+## 🙋 FAQ
+
+**Q: Can I use this with other codebases?**  
+A: Yes! Change the `REPO_URL` and `LOCAL_PATH` variables in the script to analyze any public Git repository.
+
+**Q: Can I use a different model?**  
+A: Yes, as long as the model supports large context windows and is available via Fireworks AI.
+
+**Q: How do I change the prompt?**  
+A: Edit the `messages` list in the script to ask any question you want about the codebase.
+
+---
+
+## 📜 License
+
+This project is for demonstration and research purposes. See the repository for license details.
+
+---
+
+## ✨ Credits
+- [Fireworks AI](https://fireworks.ai/) for the LLaMA 4 Maverick model and API
+- [PyTorch](https://github.com/pytorch/pytorch) for the open-source codebase
+- [tiktoken](https://github.com/openai/tiktoken) for efficient tokenization
